@@ -1,11 +1,31 @@
 ### NOTE: MAKE SURE TO USE 6.1 INCH simulator to capture starting screenshots
 this will save u from adjusting the images later
 
-# App Store Screenshots Generator
+# App Store Screenshots Generator (Security-Hardened Fork)
+
+A security-hardened fork of [ParthJadhav/app-store-screenshots](https://github.com/ParthJadhav/app-store-screenshots).
 
 A skill for AI-powered coding agents (Claude Code, Cursor, Windsurf, etc.) that generates production-ready App Store screenshots for iOS apps. It scaffolds a Next.js project, designs advertisement-style screenshots, and exports them at all required Apple resolutions.
 
 ![Example output — Bloom coffee tracking app](example.png)
+
+## Security Improvements
+
+This fork adds the following security hardening over the original:
+
+| Issue | Original | This Fork |
+|-------|----------|-----------|
+| **Dependency pinning** | `@latest` / unpinned | Pinned to specific versions (`next@15.1.0`, `html-to-image@1.11.13`) |
+| **Input validation** | None | Color, font name, file path, and text content validation with regex + blocklists |
+| **Path traversal** | No checks | Rejects `..`, absolute paths, null bytes; restricts to image extensions |
+| **Injection via user text** | Text flows into code unchecked | Forbids HTML tags (except `<br />`), `javascript:` URIs, template literals `${...}` |
+| **Injection via colors** | Raw string interpolation | Validates against CSS color formats; blocks `url()`, `expression()`, `eval()` |
+| **Injection via font names** | Arbitrary strings used in imports | Alphanumeric + space + hyphen only, max 60 chars |
+| **dangerouslySetInnerHTML** | Not explicitly forbidden | Explicitly forbidden — all text via JSX escaping |
+| **Additional instructions scope** | "User instructions always override skill defaults" | Scoped to visual/design only — cannot install packages, run commands, or access files outside project |
+| **Network requests** | Not restricted | Explicitly forbidden in generated code — no `fetch()` or external URLs |
+| **Filename sanitization** | None | Strips non-alphanumeric chars from export filenames |
+| **Dynamic code execution** | Not restricted | `eval()`, `new Function()` explicitly forbidden |
 
 ## What it does
 
@@ -25,7 +45,7 @@ A skill for AI-powered coding agents (Claude Code, Cursor, Windsurf, etc.) that 
 ### Using npx skills (recommended)
 
 ```bash
-npx skills add ParthJadhav/app-store-screenshots
+npx skills add ofirkris/app-store-screenshots
 ```
 
 This works with Claude Code, Cursor, Windsurf, OpenCode, Codex, and [40+ other agents](https://github.com/vercel-labs/skills#available-agents).
@@ -33,19 +53,19 @@ This works with Claude Code, Cursor, Windsurf, OpenCode, Codex, and [40+ other a
 Install globally (available across all projects):
 
 ```bash
-npx skills add ParthJadhav/app-store-screenshots -g
+npx skills add ofirkris/app-store-screenshots -g
 ```
 
 Install for a specific agent:
 
 ```bash
-npx skills add ParthJadhav/app-store-screenshots -a claude-code
+npx skills add ofirkris/app-store-screenshots -a claude-code
 ```
 
 ### Manual (git clone)
 
 ```bash
-git clone https://github.com/ParthJadhav/app-store-screenshots ~/.claude/skills/app-store-screenshots
+git clone https://github.com/ofirkris/app-store-screenshots ~/.claude/skills/app-store-screenshots
 ```
 
 ## Usage
@@ -96,13 +116,13 @@ Screenshots are designed at 1320x2868 (largest) and scaled down for smaller size
 
 ## Tech stack
 
-| Dependency | Purpose |
-|-----------|---------|
-| Next.js | Dev server + static image serving |
-| TypeScript | Type safety |
-| Tailwind CSS | Styling |
-| html-to-image | PNG export at exact resolutions |
-| React | Component composition |
+| Dependency | Version | Purpose |
+|-----------|---------|---------|
+| Next.js | 15.1.0 | Dev server + static image serving |
+| TypeScript | (bundled) | Type safety |
+| Tailwind CSS | (bundled) | Styling |
+| html-to-image | 1.11.13 | PNG export at exact resolutions |
+| React | (bundled) | Component composition |
 
 ## Key design principles
 
