@@ -42,7 +42,7 @@ This fork adds the following security hardening over the original:
 
 ## Install
 
-### Using npx skills (recommended)
+### Using npx skills (project-scoped — recommended)
 
 ```bash
 npx skills add ofirkris/app-store-screenshots
@@ -50,21 +50,27 @@ npx skills add ofirkris/app-store-screenshots
 
 This works with Claude Code, Cursor, Windsurf, OpenCode, Codex, and [40+ other agents](https://github.com/vercel-labs/skills#available-agents).
 
-Install globally (available across all projects):
-
-```bash
-npx skills add ofirkris/app-store-screenshots -g
-```
-
 Install for a specific agent:
 
 ```bash
 npx skills add ofirkris/app-store-screenshots -a claude-code
 ```
 
-### Manual (git clone)
+### Global install (use with caution)
+
+Global installation modifies your AI agent's behavior across **all projects and future sessions**. A compromised or buggy skill update would affect everything. Prefer project-scoped installation unless you have a specific reason.
 
 ```bash
+npx skills add ofirkris/app-store-screenshots -g
+```
+
+### Manual (git clone — project-scoped)
+
+```bash
+# Project-scoped (recommended)
+git clone https://github.com/ofirkris/app-store-screenshots .claude/skills/app-store-screenshots
+
+# Global (affects all projects — use with caution)
 git clone https://github.com/ofirkris/app-store-screenshots ~/.claude/skills/app-store-screenshots
 ```
 
